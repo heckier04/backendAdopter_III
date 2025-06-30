@@ -23,172 +23,172 @@ mongoose.set('strictQuery', false);
 // Conectar a MongoDB
 async function connectDB() {
     try {
-    mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/adoptme', {
+    mongoose.connect(process.env.MONGO_URL || 'mongo:27017/backend_final', {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
     console.log('✅ Conectado a MongoDB');
     return true;
-} catch (error) {
+    } catch (error) {
     console.error('❌ Error conectando a MongoDB:', error);
     return false;
-}
+  }
 }
 
 // Limpiar la base de datos
 async function cleanDatabase() {
-    try {
+  try {
     await Promise.all([
-        User.deleteMany({}),
-        Pet.deleteMany({}),
-        Adoption.deleteMany({})
+      User.deleteMany({}),
+      Pet.deleteMany({}),
+      Adoption.deleteMany({})
     ]);
     console.log('🧹 Base de datos limpiada');
     return true;
-} catch (error) {
+  } catch (error) {
     console.error('❌ Error limpiando la base de datos:', error);
     return false;
-    }
+  }
 }
 
-// Crear usuarios
+// Crear usuarios (2 admin + 18 usuarios)
 async function createUsers() {
-    try {
+  try {
     const admins = [
-        {
-            first_name: 'Admin',
-            last_name: 'Uno',
-            email: 'admin1@adoptme.com',
-            password: await bcrypt.hash('123456', 10),
-            role: 'admin'
-        },
-        {
-            first_name: 'Admin',
-            last_name: 'Dos',
-            email: 'admin2@adoptme.com',
-            password: await bcrypt.hash('123456', 10),
-            role: 'admin'
-        }
+      {
+        first_name: 'Admin',
+        last_name: 'Uno',
+        email: 'admin1@adoptme.com',
+        password: await bcrypt.hash('123456', 10),
+        role: 'admin'
+      },
+      {
+        first_name: 'Admin',
+        last_name: 'Dos',
+        email: 'admin2@adoptme.com',
+        password: await bcrypt.hash('123456', 10),
+        role: 'admin'
+      }
     ];
 
     const users = [];
     for (let i = 1; i <= 18; i++) {
-        users.push({
-            first_name: faker.person.firstName(),
-            last_name: faker.person.lastName(),
-            email: `user${i}@adoptme.com`,
-            password: await bcrypt.hash('password123', 10),
-            role: 'user'
-        });
+      users.push({
+        first_name: faker.person.firstName(),
+        last_name: faker.person.lastName(),
+        email: `user${i}@adoptme.com`,
+        password: await bcrypt.hash('password123', 10),
+        role: 'user'
+      });
     }
 
     const allUsers = await User.insertMany([...admins, ...users]);
     console.log(`👤 Creados ${allUsers.length} usuarios (2 admin, 18 usuarios regulares)`);
     return allUsers;
-    } catch (error) {
+  } catch (error) {
     console.error('❌ Error creando usuarios:', error);
     return [];
-    }
+  }
 }
 
-// Crear mascotas
+// Crear mascotas (45 perros + 45 gatos)
 async function createPets() {
-    try {
+  try {
     const pets = [];
     const dogBreeds = [
-        'Labrador Retriever', 'Pastor Alemán', 'Golden Retriever', 'Bulldog Francés',
-        'Beagle', 'Poodle', 'Rottweiler', 'Yorkshire Terrier', 'Boxer', 'Dálmata',
-        'Chihuahua', 'Bulldog Inglés', 'Pug', 'Husky Siberiano', 'Dóberman',
-        'Gran Danés', 'Schnauzer', 'Pomerania', 'Shih Tzu', 'Border Collie'
+      'Labrador Retriever', 'Pastor Alemán', 'Golden Retriever', 'Bulldog Francés',
+      'Beagle', 'Poodle', 'Rottweiler', 'Yorkshire Terrier', 'Boxer', 'Dálmata',
+      'Chihuahua', 'Bulldog Inglés', 'Pug', 'Husky Siberiano', 'Dóberman',
+      'Gran Danés', 'Schnauzer', 'Pomerania', 'Shih Tzu', 'Border Collie'
     ];
     const catBreeds = [
-        'Siamés', 'Persa', 'Maine Coon', 'Bengalí', 'Esfinge', 'Azul Ruso',
-        'Británico de Pelo Corto', 'Ragdoll', 'Siberiano', 'Angora Turco',
-        'Scottish Fold', 'Birmano', 'Abisinio', 'Somalí', 'Burmés',
-        'Bombay', 'Oriental', 'Van Turco'
+      'Siamés', 'Persa', 'Maine Coon', 'Bengalí', 'Esfinge', 'Azul Ruso',
+      'Británico de Pelo Corto', 'Ragdoll', 'Siberiano', 'Angora Turco',
+      'Scottish Fold', 'Birmano', 'Abisinio', 'Somalí', 'Burmés',
+      'Bombay', 'Oriental', 'Van Turco'
     ];
 
     // 45 perros
     for (let i = 0; i < 45; i++) {
-        pets.push({
-            name: faker.person.firstName(),
-            species: 'Perro',
-            breed: faker.helpers.arrayElement(dogBreeds),
-            age: faker.number.int({ min: 1, max: 15 }),
-            gender: faker.helpers.arrayElement(['Macho', 'Hembra']),
-            size: faker.helpers.arrayElement(['Pequeño', 'Mediano', 'Grande']),
-            description: faker.lorem.paragraph(),
-            status: 'Disponible',
-            image: 'https://source.unsplash.com/random/300x300/?dog'
-        });
+      pets.push({
+        name: faker.person.firstName(),
+        species: 'Perro',
+        breed: faker.helpers.arrayElement(dogBreeds),
+        age: faker.number.int({ min: 1, max: 15 }),
+        gender: faker.helpers.arrayElement(['Macho', 'Hembra']),
+        size: faker.helpers.arrayElement(['Pequeño', 'Mediano', 'Grande']),
+        description: faker.lorem.paragraph(),
+        status: 'Disponible',
+        image: 'https://source.unsplash.com/random/300x300/?dog'
+      });
     }
 
     // 45 gatos
     for (let i = 0; i < 45; i++) {
-        pets.push({
-            name: faker.person.firstName(),
-            species: 'Gato',
-            breed: faker.helpers.arrayElement(catBreeds),
-            age: faker.number.int({ min: 1, max: 18 }),
-            gender: faker.helpers.arrayElement(['Macho', 'Hembra']),
-            size: faker.helpers.arrayElement(['Pequeño', 'Mediano']),
-            description: faker.lorem.paragraph(),
-            status: 'Disponible',
-            image: 'https://source.unsplash.com/random/300x300/?cat'
-        });
+      pets.push({
+        name: faker.person.firstName(),
+        species: 'Gato',
+        breed: faker.helpers.arrayElement(catBreeds),
+        age: faker.number.int({ min: 1, max: 18 }),
+        gender: faker.helpers.arrayElement(['Macho', 'Hembra']),
+        size: faker.helpers.arrayElement(['Pequeño', 'Mediano']),
+        description: faker.lorem.paragraph(),
+        status: 'Disponible',
+        image: 'https://source.unsplash.com/random/300x300/?cat'
+      });
     }
 
     const allPets = await Pet.insertMany(pets);
     console.log(`🐾 Creadas ${allPets.length} mascotas (45 perros, 45 gatos)`);
     return allPets;
-    } catch (error) {
+  } catch (error) {
     console.error('❌ Error creando mascotas:', error);
     return [];
-    }
+  }
 }
 
-// Crear adopciones
+// Crear adopciones (cada usuario regular adopta una mascota)
 async function createAdoptions(users, pets) {
-    try {
-        const adoptions = [];
-        const availablePets = [...pets];
+  try {
+    const adoptions = [];
+    const availablePets = [...pets];
 
     // Cada usuario (excepto admins) adopta una mascota
     for (let i = 2; i < users.length && availablePets.length > 0; i++) {
-        const randomPetIndex = Math.floor(Math.random() * availablePets.length);
-        const pet = availablePets.splice(randomPetIndex, 1)[0];
+      const randomPetIndex = Math.floor(Math.random() * availablePets.length);
+      const pet = availablePets.splice(randomPetIndex, 1)[0];
 
-        const adoption = new Adoption({
-            owner: users[i]._id,
-            pet: pet._id
-        });
+      const adoption = new Adoption({
+        owner: users[i]._id,
+        pet: pet._id
+      });
 
       // Actualizar estado de la mascota
-await Pet.findByIdAndUpdate(pet._id, { status: 'Adoptado' });
+      await Pet.findByIdAndUpdate(pet._id, { status: 'Adoptado' });
 
-        adoptions.push(await adoption.save());
+      adoptions.push(await adoption.save());
     }
 
-        console.log(`🏠 Creadas ${adoptions.length} adopciones`);
-        return adoptions;
-    } catch (error) {
-        console.error('❌ Error creando adopciones:', error);
-        return [];
-}
+    console.log(`🏠 Creadas ${adoptions.length} adopciones`);
+    return adoptions;
+  } catch (error) {
+    console.error('❌ Error creando adopciones:', error);
+    return [];
+  }
 }
 
 // Función principal
 async function seedDatabase() {
-    try {
-        const connected = await connectDB();
-        if (!connected) process.exit(1);
+  try {
+    const connected = await connectDB();
+    if (!connected) process.exit(1);
 
-        console.log('\n🚀 Iniciando proceso de semillado de la base de datos...');
+    console.log('\n🚀 Iniciando proceso de semillado de la base de datos...');
 
     await cleanDatabase();
-        const users = await createUsers();
-        const pets = await createPets();
-        await createAdoptions(users, pets);
+    const users = await createUsers();
+    const pets = await createPets();
+    await createAdoptions(users, pets);
 
     console.log('\n✅ ¡Base de datos poblada exitosamente!');
     console.log('\n🔑 Credenciales de administradores:');
@@ -196,12 +196,12 @@ async function seedDatabase() {
     console.log('- admin2@adoptme.com / 123456');
     console.log('\n🔑 Credenciales de usuarios (todos con contraseña "password123"):');
     console.log('user1@adoptme.com a user18@adoptme.com');
-    } catch (error) {
-        console.error('❌ Error en el proceso de semillado:', error);
-    } finally {
-        await mongoose.connection.close();
-        console.log('🔌 Conexión cerrada');
-    }
+  } catch (error) {
+    console.error('❌ Error en el proceso de semillado:', error);
+  } finally {
+    await mongoose.connection.close();
+    console.log('🔌 Conexión cerrada');
+  }
 }
 
 // Ejecutar el script

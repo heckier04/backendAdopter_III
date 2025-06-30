@@ -1,43 +1,112 @@
-import chai from 'chai';
-import chaiHttp from 'chai-http';
+import { expect } from 'chai';
+import supertest from 'supertest';
 import app from '../src/app.js';
+import { setupTestDB, closeDB } from './config/test.config.js';
 
-chai.use(chaiHttp);
-const expect = chai.expect;
+const request = supertest(app);
+setupTestDB();
 
-describe('API de Usuarios', () => {
-it('GET /api/users debe devolver todos los usuarios', async () => {
-    const res = await chai.request(app).get('/api/users');
-    expect(res).to.have.status(200);
-    expect(res.body).to.be.an('array');
-    expect(res.body.length).to.be.greaterThan(0);
-});
+describe('Users API', function () {
+  this.timeout(20000);
+  let adminCookie;
+  let testUser;
 
-it('POST /api/users debe crear un usuario', async () => {
-    const user = {
-        first_name: 'Test',
-        last_name: 'User',
-        email: `testuser${Date.now()}@mail.com`,
-        password: 'password123'
+  before(async function () {
+    // Crear admin
+    const adminData = {
+      first_name: 'Admin',
+      last_name: 'User',
+      email: `admin${Date.now()}@example.com`,
+      password: 'admin123',
+      role: 'admin'
     };
-    const res = await chai.request(app).post('/api/users').send(user);
-    expect(res).to.have.status(201);
-    expect(res.body).to.have.property('_id');
-    expect(res.body.email).to.equal(user.email);
-});
 
-it('GET /api/users/:id debe devolver un usuario por id', async () => {
-    const user = {
-        first_name: 'Test2',
-        last_name: 'User2',
-        email: `testuser2${Date.now()}@mail.com`,
-        password: 'password123'
+    await request.post('/api/sessions/register').send(adminData);
+
+    const loginRes = await request
+      .post('/api/sessions/login')
+      .send({ email: adminData.email, password: adminData.password });
+
+    expect(loginRes.headers).to.have.property('set-cookie');
+    adminCookie = loginRes.headers['set-cookie'];
+
+    // Crear usuario normal
+    const userData = {
+      first_name: 'Test',
+      last_name: 'User',
+      email: `user${Date.now()}@example.com`,
+      password: 'user123'
     };
-    const createRes = await chai.request(app).post('/api/users').send(user);
-    const userId = createRes.body._id;
 
-    const res = await chai.request(app).get(`/api/users/${userId}`);
-        expect(res).to.have.status(200);
-        expect(res.body).to.have.property('_id', userId);
+    const userRes = await request.post('/api/sessions/register').send(userData);
+    testUser = userRes.body.payload || userRes.body.user;
+  });
+
+  after(async function () {
+    await closeDB();
+  });
+
+  describe('GET /api/users', () => {
+    it('debería obtener una lista de usuarios (solo admin)', async () => {
+      const res = await request
+        .get('/api/users')
+        .set('Cookie', adminCookie);
+
+      expect(res.status).to.equal(200);
+      expect(res.body).to.have.property('status', 'success');
+      expect(res.body.payload).to.be.an('array');
     });
+  });
+
+  describe('GET /api/users/:id', () => {
+    it('debería obtener un usuario por ID', async () => {
+      const res = await request
+        .get(`/api/users/${testUser._id}`)
+        .set('Cookie', adminCookie);
+
+      expect(res.status).to.equal(200);
+      expect(res.body).to.have.property('status', 'success');
+      expect(res.body.payload).to.have.property('_id', testUser._id);
+      expect(res.body.payload).to.have.property('email', testUser.email);
+    });
+
+    it('debería retornar error si el ID es inválido', async () => {
+      const res = await request
+        .get('/api/users/invalid-id')
+        .set('Cookie', adminCookie);
+
+      expect(res.status).to.be.oneOf([400, 404]);
+      expect(res.body).to.have.property('status', 'error');
+    });
+  });
+
+  describe('DELETE /api/users/:id', () => {
+    it('debería eliminar un usuario existente (solo admin)', async () => {
+      const userToDelete = {
+        first_name: 'Delete',
+        last_name: 'Me',
+        email: `deleteme${Date.now()}@example.com`,
+        password: 'delete123'
+      };
+
+      const createRes = await request.post('/api/sessions/register').send(userToDelete);
+      const createdUser = createRes.body.payload || createRes.body.user;
+
+      const deleteRes = await request
+        .delete(`/api/users/${createdUser._id}`)
+        .set('Cookie', adminCookie);
+
+      expect(deleteRes.status).to.equal(200);
+      expect(deleteRes.body).to.have.property('status', 'success');
+    });
+
+    it('debería retornar error si el ID es inválido al eliminar', async () => {
+      const res = await request
+        .delete('/api/users/invalid-id')
+        .set('Cookie', adminCookie);
+
+      expect(res.status).to.be.oneOf([400, 404]);
+      expect(res.body).to.have.property('status', 'error');
+    });
+  });
 });

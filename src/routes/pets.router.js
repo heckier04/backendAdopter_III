@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import petsController from '../controllers/pets.controller.js';
 import uploader from '../utils/uploader.js';
+import { validatePet } from '../middlewares/validatePet.js';
 
 const router = Router();
 
@@ -80,7 +81,7 @@ router.get('/', petsController.getAllPets);
  *       201:
  *         description: Mascota creada
  */
-router.post('/', petsController.createPet);
+router.post('/', validatePet, petsController.createPet);
 
 /**
  * @swagger

@@ -2,10 +2,15 @@ import PetDTO from "../dto/Pet.dto.js";
 import { petsService } from "../services/index.js"
 import __dirname from "../utils/index.js";
 
-const getAllPets = async(req,res)=>{
-    const pets = await petsService.getAll();
-    res.send({status:"success",payload:pets})
-}
+const getAllPets = async (req, res) => {
+    try {
+        const pets = await petsService.getAll();
+        res.send({ status: "success", payload: pets });
+    } catch (error) {
+        console.error('Error en getAllPets:', error);
+        res.status(500).send({ status: "error", error: error.message });
+    }
+};
 
 const createPet = async(req,res)=> {
     const {name,specie,birthDate} = req.body;

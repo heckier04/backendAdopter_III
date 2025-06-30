@@ -64,24 +64,22 @@ router.get('/:aid', adoptionsController.getAdoption);
 
 /**
  * @swagger
- * /api/adoptions/{uid}/{pid}:
+ * /api/adoptions:
  *   post:
  *     summary: Crea una nueva adopción
  *     tags:
  *       - Adopciones
- *     parameters:
- *       - in: path
- *         name: uid
- *         required: true
- *         schema:
- *           type: string
- *         description: ID del usuario
- *       - in: path
- *         name: pid
- *         required: true
- *         schema:
- *           type: string
- *         description: ID de la mascota
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               owner:
+ *                 type: string
+ *               pet:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Adopción creada exitosamente

@@ -1,0 +1,11 @@
+
+services:
+  adoptme:
+    image: heckier04/adoptme:latest
+    container_name: adoptme-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URL=mongodb+srv://thiagovillasanti35:vVthj8ELmVE2LiYJ@cluster0.gfmot.mongodb.net/backend_final?retryWrites=true&w=majority&appName=Cluster0
+      - NODE_ENV=production
