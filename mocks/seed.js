@@ -112,7 +112,7 @@ async function createPets() {
     for (let i = 0; i < 45; i++) {
       pets.push({
         name: faker.person.firstName(),
-        species: 'Perro',
+        specie: 'Perro',
         breed: faker.helpers.arrayElement(dogBreeds),
         age: faker.number.int({ min: 1, max: 15 }),
         gender: faker.helpers.arrayElement(['Macho', 'Hembra']),
@@ -127,7 +127,7 @@ async function createPets() {
     for (let i = 0; i < 45; i++) {
       pets.push({
         name: faker.person.firstName(),
-        species: 'Gato',
+        specie: 'Gato',
         breed: faker.helpers.arrayElement(catBreeds),
         age: faker.number.int({ min: 1, max: 18 }),
         gender: faker.helpers.arrayElement(['Macho', 'Hembra']),

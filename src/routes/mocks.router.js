@@ -16,7 +16,7 @@ const usersMock = Array.from({ length: 10 }, () => ({
 const petsMock = Array.from({ length: 10 }, () => ({
     _id: faker.database.mongodbObjectId(),
     name: faker.person.firstName(),
-    species: faker.helpers.arrayElement(['Perro', 'Gato']),
+    specie: faker.helpers.arrayElement(['Perro', 'Gato']),
     breed: faker.animal.dog(),
     age: faker.number.int({ min: 1, max: 15 }),
     gender: faker.helpers.arrayElement(['Macho', 'Hembra']),
