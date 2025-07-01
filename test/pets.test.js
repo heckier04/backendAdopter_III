@@ -35,7 +35,7 @@ describe('Pets API', () => {
         name: petData.name,
         specie: petData.specie,
       });
-      // birthDate en la DB puede venir como ISO string, entonces verificamos que incluya la fecha
+      
       expect(res.body.payload.birthDate).to.include('2020-01-01');
     });
 
@@ -77,14 +77,13 @@ describe('Pets API', () => {
 
     it('debería obtener una mascota por ID', async function () {
       if (!testPet || !testPet._id) {
-        this.skip(); // Saltea el test si no hay mascota creada
-        return;
+        this.skip(); 
       }
 
       const res = await request.get(`/api/pets/${testPet._id}`);
       console.log('GET /api/pets/:id response:', res.status, res.body);
 
-      // Si devuelve 400, posiblemente es problema con el id, se saltea para no fallar el test
+      
       if (res.status === 400) {
         this.skip();
         return;

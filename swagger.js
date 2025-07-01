@@ -10,7 +10,7 @@ const options = {
         description: 'Documentación de la API Adoptme'
     }
     },
-  apis: ['./src/routes/*.js'], // Corregido: usa ./src/routes/*.js
+  apis: ['./src/routes/*.js'], 
 };
 
 export const swaggerSpec = swaggerJSDoc(options);

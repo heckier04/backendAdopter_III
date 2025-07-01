@@ -31,7 +31,7 @@ app.use('/api/sessions', sessionsRouter);
 app.use('/api/mocks', mocksRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Exportar app sin levantar el server si es para test
+
 if (process.env.NODE_ENV !== 'test') {
   mongoose.connect(process.env.MONGO_URL)
     .then(() => {

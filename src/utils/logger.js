@@ -48,7 +48,7 @@ const logger = createLogger({
   ]
 });
 
-// Middleware para agregar logger a cada request (opcional)
+
 export const addLogger = (req, res, next) => {
   req.logger = logger;
   next();

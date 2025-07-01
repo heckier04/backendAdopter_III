@@ -14,7 +14,7 @@ describe('Adoptions API', function () {
   let petToAdopt;
 
   before(async function () {
-  // Registrar un usuario
+  
     const userData = {
       first_name: 'Adoptante',
       last_name: 'Tester',
@@ -25,7 +25,7 @@ describe('Adoptions API', function () {
     const registerRes = await request.post('/api/sessions/register').send(userData);
     testUser = registerRes.body.payload || registerRes.body.user;
 
-    // Extraer ID correcto de testUser (por si viene string o objeto)
+    
     const userId = typeof testUser === 'string' ? testUser : (testUser._id || testUser.id);
 
     // Login para obtener token
@@ -33,7 +33,7 @@ describe('Adoptions API', function () {
       .post('/api/sessions/login')
       .send({ email: userData.email, password: userData.password });
 
-    // Extraer cookie 'coderCookie' del header set-cookie
+    
     const cookies = loginRes.headers['set-cookie'];
     let authToken;
     if (cookies && cookies.length) {
@@ -47,7 +47,7 @@ describe('Adoptions API', function () {
     const decoded = jwt.verify(authToken, process.env.JWT_SECRET || 'tokenSecretJWT');
     const userIdFromToken = decoded.id || decoded._id;
 
-    // Verificar que ID del token y de registro coincidan
+    
     expect(userIdFromToken).to.equal(userId);
 
     userToken = authToken;

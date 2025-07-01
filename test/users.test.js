@@ -40,8 +40,8 @@ describe('Users API', function () {
     };
 
     const userRes = await request.post('/api/sessions/register').send(userData);
-    testUserId = userRes.body.payload;  // Solo ID (string)
-    userEmail = userData.email;         // Guardamos email para validación
+    testUserId = userRes.body.payload;  
+    userEmail = userData.email;         
   });
 
   describe('GET /api/users/:id', () => {

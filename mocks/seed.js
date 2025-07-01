@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker/locale/es';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Configuración de __dirname para ES modules
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -35,7 +35,7 @@ async function connectDB() {
   }
 }
 
-// Limpiar la base de datos
+
 async function cleanDatabase() {
   try {
     await Promise.all([
@@ -51,7 +51,7 @@ async function cleanDatabase() {
   }
 }
 
-// Crear usuarios (2 admin + 18 usuarios)
+
 async function createUsers() {
   try {
     const admins = [
@@ -91,7 +91,7 @@ async function createUsers() {
   }
 }
 
-// Crear mascotas (45 perros + 45 gatos)
+
 async function createPets() {
   try {
     const pets = [];
@@ -108,7 +108,7 @@ async function createPets() {
       'Bombay', 'Oriental', 'Van Turco'
     ];
 
-    // 45 perros
+    
     for (let i = 0; i < 45; i++) {
       pets.push({
         name: faker.person.firstName(),
@@ -123,7 +123,7 @@ async function createPets() {
       });
     }
 
-    // 45 gatos
+    
     for (let i = 0; i < 45; i++) {
       pets.push({
         name: faker.person.firstName(),
@@ -147,13 +147,13 @@ async function createPets() {
   }
 }
 
-// Crear adopciones (cada usuario regular adopta una mascota)
+// Crear adopciones 
 async function createAdoptions(users, pets) {
   try {
     const adoptions = [];
     const availablePets = [...pets];
 
-    // Cada usuario (excepto admins) adopta una mascota
+    
     for (let i = 2; i < users.length && availablePets.length > 0; i++) {
       const randomPetIndex = Math.floor(Math.random() * availablePets.length);
       const pet = availablePets.splice(randomPetIndex, 1)[0];
@@ -204,5 +204,5 @@ async function seedDatabase() {
   }
 }
 
-// Ejecutar el script
+
 seedDatabase();
