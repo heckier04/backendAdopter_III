@@ -18,9 +18,14 @@ const PORT = process.env.PORT || 3000;
 // Conexión a MongoDB
 console.log('MONGO_URL usado:', process.env.MONGO_URL);
 mongoose.connect(process.env.MONGO_URL)
-    .then(() => console.log('✅ Conectado a MongoDB'))
-    .catch(err => console.error('❌ Error conectando a MongoDB:', err));
-
+  .then(() => {
+    console.log('✅ Conectado a MongoDB');
+    // 👇 Servidor escucha después de conectarse correctamente
+    app.listen(PORT, () => {
+      console.log(`🚀 Servidor escuchando en puerto ${PORT}`);
+    });
+  })
+  .catch(err => console.error('❌ Error conectando a MongoDB:', err));
 app.use(express.json());
 app.use(cookieParser());
 app.use(addLogger); 
